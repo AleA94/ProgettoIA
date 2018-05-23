@@ -1,0 +1,49 @@
+#maxint = 100.
+element("Mouse").
+element("Wall").
+element("jdlv_null_value").
+
+scelgo(Z,X,Y) | nonScelgo(Z,X,Y) :- grafo(Z,X,Y).
+
+odd(N) :- #int(N), not #mod(N,2,0).
+:-scelgo("Wall",X,Y).
+:-scelgo("Mouse",X,Y).
+
+adiacenzaDispari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), odd(X), X1 = X+1,Y=Y1, X<10.
+adiacenzaDispari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), odd(X), X1 = X+1, Y1 = Y+1, X<10, Y<10.
+adiacenzaDispari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), odd(X), X1 = X-1, Y1=Y, X>=0.
+adiacenzaDispari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), odd(X), Y1 = Y-1,X = X1, Y>=0.
+adiacenzaDispari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), odd(X), Y1 = Y+1,X = X1, Y<10.
+adiacenzaDispari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), odd(X), X1 = X-1, Y1 = Y+1, X>=0, Y<10.
+
+adiacenzaPari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), not odd(X), Y1=Y, X1 = X+1, X<10.
+adiacenzaPari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), not odd(X), X1 = X+1, Y1 = Y-1, X<10, Y>=0.
+adiacenzaPari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), not odd(X), X1 = X-1,Y=Y1, X>=0.
+adiacenzaPari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), not odd(X), Y1 = Y-1,X=X1, Y>=0.
+adiacenzaPari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), not odd(X), X=X1, Y1= Y+1, Y<10.
+adiacenzaPari(X,Y,X1,Y1) :- grafo(Z,X,Y), grafo(Z1,X1,Y1), not odd(X), X1 = X-1, Y1 = Y-1, Y>=0, X>=0.
+
+adiacenza(X,Y,X1,Y1) :- adiacenzaPari(X,Y,X1,Y1).
+adiacenza(X,Y,X1,Y1) :- adiacenzaDispari(X,Y,X1,Y1).
+
+calcolaMuriAdiacenti(S):- #count{Z,X,Y,X1,Y1: grafo(Z,X,Y), grafo("Mouse",X1,Y1), adiacenza(X,Y,X1,Y1), Z="Wall"}=S, #int(S).
+
+mossa(Z,X,Y) :- grafo(Z,X,Y), adiacenza(X,Y,X1,Y1), grafo("Mouse",X1,Y1), Z="jdlv_null_value".
+
+scelgo(Z,X,Y):- walls(Z,X,Y), Z="jdlv_null_value".
+
+posizioneLimite(Z,X,Y):- grafo(Z,X,Y), grafo("Mouse",X1,Y1), adiacenza(X,Y,X1,Y1), X=0.
+posizioneLimite(Z,X,Y):- grafo(Z,X,Y), grafo("Mouse",X1,Y1), adiacenza(X,Y,X1,Y1), X=10.
+posizioneLimite(Z,X,Y):- grafo(Z,X,Y), grafo("Mouse",X1,Y1), adiacenza(X,Y,X1,Y1), Y=0.
+posizioneLimite(Z,X,Y):- grafo(Z,X,Y), grafo("Mouse",X1,Y1), adiacenza(X,Y,X1,Y1), Y=10.
+
+
+:~ scelgo(Z,X,Y), mossa(Z,X,Y), calcolaMuriAdiacenti(S), S>4. [1:6]
+:~ scelgo(Z,X,Y), walls(Z,X,Y), Z="jdlv_null_value". [1:4]
+:~ scelgo(Z,X,Y), #count{Z1,X1,Y1: adiacenza(X,Y,X1,Y1), grafo(Z1,X1,Y1), Z1 = "Wall"} = K, #int(K), K=2. [1:2]
+:~ scelgo(Z,X,Y), mossa(Z,X,Y). [1:3]
+:~ scelgo(Z,X,Y), posizioneLimite(Z,X,Y). [1:5]
+
+%:~ nonScelgo(Z,X,Y), not walls(Z,X,Y). [1:4]
+
+res(Z,X,Y):- scelgo(Z,X,Y).

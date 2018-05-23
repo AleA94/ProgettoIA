@@ -1,0 +1,71 @@
+package DLV;
+import core.SparseGraph;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.*;
+import DATA.Cell;
+
+public class AI{
+	public List<Cell> mossa(int sg[][], List<Object> ar, List<Object> paths){
+		
+		Set<Cell> matrix = new HashSet<Cell>();
+		Set<Cell> minPath = new HashSet<Cell>();
+		Set<Cell> endPaths = new HashSet<Cell>();
+		int size = ar.size();
+		List<Cell> res = new ArrayList<Cell>();
+		
+		for(int i = 0;i<sg.length;i++){
+			for(int j = 0;j<sg.length;j++){
+				Cell a = new Cell();
+				a.setRow(i);
+				a.setColumn(j);
+
+				if(sg[i][j] == 0)
+					a.setElement("jdlv_null_value");
+				else if(sg[i][j] == 1)
+						a.setElement("Wall");
+				else
+					a.setElement("Mouse");
+				
+				matrix.add(a);
+			}
+		}
+		
+		for(Object o : ar){
+				Cell a = new Cell();
+				String s[] = o.toString().split(" "); 
+				a.setRow(Integer.parseInt(s[0]));
+				a.setColumn(Integer.parseInt(s[1]));
+				if(s[2].equals("0"))
+				a.setElement("jdlv_null_value");
+				else if(s[2].equals("1"))
+				a.setElement("Wall");
+				else
+				a.setElement("Mouse");
+				minPath.add(a);
+		}
+		
+		for(Object o : paths){
+				Cell a = new Cell();
+				String s[] = o.toString().split(" "); 
+				a.setRow(Integer.parseInt(s[0]));
+				a.setColumn(Integer.parseInt(s[1]));
+				if(s[2].equals("0"))
+				a.setElement("jdlv_null_value");
+				else if(s[2].equals("1"))
+				a.setElement("Wall");
+				else
+				a.setElement("Mouse");
+				endPaths.add(a);
+		}
+		
+		<#  FILE = "src/DLV/risolviMossa.dl";
+			IN = matrix::grafo,minPath::walls, endPaths::endPaths, size::size;
+			OUT = res::res;
+		#>
+		return res;
+	}
+	
+}
